@@ -10,9 +10,9 @@ pub use timer_macro::{fn_timer, timer};
 pub mod macros;
 
 #[derive(Default)]
-pub struct Timer {
-    timers: HashMap<String, Instant>,
-    avg: HashMap<String, (Vec<(Instant, Option<Instant>)>, u32)>,
+pub struct Timer<'a> {
+    timers: HashMap<&'a str, Instant>,
+    avg: HashMap<&'a str, (Vec<(Instant, Option<Instant>)>, u32)>,
     bottleneck: u64,
 }
 
@@ -22,7 +22,7 @@ fn log(text: String) {
     }
 }
 
-impl Timer {
+impl<'a> Timer<'a> {
     pub fn new(bottleneck: Option<u64>) -> Self {
         Self {
             timers: HashMap::new(),
@@ -31,70 +31,68 @@ impl Timer {
         }
     }
 
-    pub fn start(&mut self, name: String) {
+    pub fn start(&mut self, name: &'a str) {
         self.timers.insert(name, Instant::now());
     }
 
-    pub fn finish(&mut self, name: String, module_path: &str) {
-        let time = self.timers.remove(&name);
-        if let Some(duration) = time {
-            let duration = if duration.elapsed() >= Duration::from_millis(self.bottleneck) {
-                format!("[{}]", fmt(duration.elapsed())).red()
+    pub fn finish(&mut self, name: &'a str, module_path: &str) {
+        if let Some(start_time) = self.timers.remove(&name) {
+            let elapsed = start_time.elapsed();
+            let duration = if elapsed >= Duration::from_millis(self.bottleneck) {
+                format!("[{}]", fmt(elapsed)).red()
             } else {
-                format!("[{}]", fmt(duration.elapsed())).blue()
+                format!("[{}]", fmt(elapsed)).blue()
             };
             log(format!("{} ({}) {}", duration, module_path.green(), name));
         }
     }
 
-    pub fn start_avg(&mut self, name: String) {
+    pub fn start_avg(&mut self, name: &'a str) {
+        let now = Instant::now();
+
         self.avg
             .entry(name)
             .and_modify(|v| {
                 if let Some(last) = v.0.last_mut() {
-                    last.1 = Some(Instant::now())
+                    last.1 = Some(now);
                 }
                 v.1 += 1;
             })
-            .or_insert((vec![(Instant::now(), None)], 1));
+            .or_insert((vec![(now, None)], 1));
     }
 
-    pub fn tick_avg(&mut self, name: String) {
-        self.avg.entry(name).and_modify(|v| {
+    pub fn tick_avg(&mut self, name: &'a str) {
+        if let Some(v) = self.avg.get_mut(&name) {
             v.0.push((Instant::now(), None));
-        });
+        }
     }
 
-    pub fn finish_avg(&mut self, name: String, module_path: &str) {
+    pub fn finish_avg(&mut self, name: &'a str, module_path: &str) {
         if let Some(avg) = self.avg.remove(&name) {
             let times = avg.1;
-            let mut durations: Vec<Duration> = Vec::new();
-            avg.0.iter().for_each(|item| {
-                if let Some(finish) = item.1 {
-                    durations.push(finish.duration_since(item.0));
+            let mut total_duration = Duration::new(0, 0);
+
+            for item in avg.0 {
+                total_duration += if let Some(finish) = item.1 {
+                    finish.duration_since(item.0)
                 } else {
-                    durations.push(Instant::now().duration_since(item.0))
-                }
-            });
-            if !durations.is_empty() {
-                let total_duration: Duration = durations.iter().sum();
-                let average_duration = total_duration / durations.len() as u32;
-                log(format!(
-                    "{}/{} ({}) {}",
-                    format!("{{{}}}", fmt(average_duration)).blue().bold(),
-                    times,
-                    module_path.green(),
-                    name
-                ));
-            } else {
-                log(format!(
-                    "{}/{} ({}) {}",
-                    format!("{{{}}}", "0.0ns").blue().bold(),
-                    times,
-                    module_path.green(),
-                    name
-                ));
+                    Instant::now().duration_since(item.0)
+                };
             }
+
+            let avg_duration = if times > 0 {
+                total_duration / times as u32
+            } else {
+                Duration::new(0, 0)
+            };
+
+            log(format!(
+                "{}/{} ({}) {}",
+                format!("{{{}}}", fmt(avg_duration)).blue().bold(),
+                times,
+                module_path.green(),
+                name
+            ));
         }
     }
 }

@@ -107,7 +107,7 @@ pub fn fn_timer(attr: TokenStream, item: TokenStream) -> TokenStream {
     }
 
     new_stmts.push(syn::parse_quote! {
-        timer.start(#fn_name_str.to_string());
+        timer.start(#fn_name_str);
     });
 
     // Populate the function
@@ -119,13 +119,13 @@ pub fn fn_timer(attr: TokenStream, item: TokenStream) -> TokenStream {
     if let Some(return_stmt) = new_stmts.pop() {
         if has_return {
             new_stmts.push(syn::parse_quote! {
-                timer.finish(#fn_name_str.to_string(), module_path!());
+                timer.finish(#fn_name_str, module_path!());
             });
             new_stmts.push(return_stmt);
         } else {
             new_stmts.push(return_stmt);
             new_stmts.push(syn::parse_quote! {
-                timer.finish(#fn_name_str.to_string(), module_path!());
+                timer.finish(#fn_name_str, module_path!());
             });
         }
     }

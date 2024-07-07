@@ -242,7 +242,7 @@ dependencies = [
 
 [[package]]
 name = "timer"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "colored",
  "env_logger",
@@ -252,7 +252,7 @@ dependencies = [
 
 [[package]]
 name = "timer_macro"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "darling",
  "proc-macro2",
