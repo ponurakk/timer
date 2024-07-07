@@ -2,6 +2,11 @@
 name = "timer"
 version = "1.0.2"
 edition = "2021"
+authors = ["ponurakk <p0unrakg@int.pl>"]
+description = "Simple timing utility with minimal overhead"
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/ponurakk/timer"
 
 [dependencies]
 colored = "2.1.0"
