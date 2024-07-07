@@ -5,6 +5,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+pub use timer_macro::{fn_timer, timer};
+
 pub mod macros;
 
 #[derive(Default)]

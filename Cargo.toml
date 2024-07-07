@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 colored = "2.1.0"
 log = "0.4.22"
+timer_macro = { path = "./timer_macro" }
