@@ -13,6 +13,7 @@ pub mod macros;
 pub struct Timer {
     timers: HashMap<String, Instant>,
     avg: HashMap<String, (Vec<(Instant, Option<Instant>)>, u32)>,
+    bottleneck: u64,
 }
 
 fn log(text: String) {
@@ -22,8 +23,12 @@ fn log(text: String) {
 }
 
 impl Timer {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(bottleneck: Option<u64>) -> Self {
+        Self {
+            timers: HashMap::new(),
+            avg: HashMap::new(),
+            bottleneck: bottleneck.unwrap_or(700),
+        }
     }
 
     pub fn start(&mut self, name: String) {
@@ -33,7 +38,7 @@ impl Timer {
     pub fn finish(&mut self, name: String, module_path: &str) {
         let time = self.timers.remove(&name);
         if let Some(duration) = time {
-            let duration = if duration.elapsed() >= Duration::from_millis(700) {
+            let duration = if duration.elapsed() >= Duration::from_millis(self.bottleneck) {
                 format!("[{}]", fmt(duration.elapsed())).red()
             } else {
                 format!("[{}]", fmt(duration.elapsed())).blue()

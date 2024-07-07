@@ -1,17 +1,45 @@
 extern crate proc_macro;
+use darling::{ast::NestedMeta, Error, FromMeta};
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, ItemFn, ReturnType};
 
+#[derive(Debug, FromMeta)]
+struct MacroArgs {
+    bottleneck: Option<u64>,
+}
+
 #[proc_macro_attribute]
-pub fn timer(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn timer(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let attr_args = match NestedMeta::parse_meta_list(attr.into()) {
+        Ok(v) => v,
+        Err(e) => {
+            return TokenStream::from(Error::from(e).write_errors());
+        }
+    };
+
     let input = parse_macro_input!(item as ItemFn);
+
+    let args = match MacroArgs::from_list(&attr_args) {
+        Ok(v) => v,
+        Err(e) => {
+            return TokenStream::from(e.write_errors());
+        }
+    };
+
     let block = &input.block;
 
     let mut new_stmts = Vec::new();
-    new_stmts.push(syn::parse_quote! {
-        let mut timer = timer::Timer::new();
-    });
+
+    if let Some(bottleneck) = args.bottleneck {
+        new_stmts.push(syn::parse_quote! {
+            let mut timer = timer::Timer::new(Some(#bottleneck));
+        });
+    } else {
+        new_stmts.push(syn::parse_quote! {
+            let mut timer = timer::Timer::new(None);
+        });
+    }
 
     // Populate the function
     for stmt in block.stmts.iter() {
@@ -37,8 +65,23 @@ pub fn timer(_attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn fn_timer(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn fn_timer(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let attr_args = match NestedMeta::parse_meta_list(attr.into()) {
+        Ok(v) => v,
+        Err(e) => {
+            return TokenStream::from(Error::from(e).write_errors());
+        }
+    };
+
     let input = parse_macro_input!(item as ItemFn);
+
+    let args = match MacroArgs::from_list(&attr_args) {
+        Ok(v) => v,
+        Err(e) => {
+            return TokenStream::from(e.write_errors());
+        }
+    };
+
     let block = &input.block;
     let fn_name_str = &input.sig.ident.to_string();
     let fn_out = &input.sig.output;
@@ -52,9 +95,16 @@ pub fn fn_timer(_attr: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     let mut new_stmts = Vec::new();
-    new_stmts.push(syn::parse_quote! {
-        let mut timer = timer::Timer::new();
-    });
+
+    if let Some(bottleneck) = args.bottleneck {
+        new_stmts.push(syn::parse_quote! {
+            let mut timer = timer::Timer::new(Some(#bottleneck));
+        });
+    } else {
+        new_stmts.push(syn::parse_quote! {
+            let mut timer = timer::Timer::new(None);
+        });
+    }
 
     new_stmts.push(syn::parse_quote! {
         timer.start(#fn_name_str.to_string());
