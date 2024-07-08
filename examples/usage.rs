@@ -9,9 +9,10 @@ fn main() {
     Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let mut hashmap: HashMap<u16, String> = HashMap::new();
+    let somevar: String = String::from("1");
 
     // You can time total execution time for loop
-    start!(timer, "Total Loop");
+    start!(timer, "Total Loop ", somevar);
     let mut _iters = 0;
     for i in 0..u16::MAX {
         // Or average per iteration
@@ -27,5 +28,5 @@ fn main() {
 
     // Finish and print results
     finish_avg!(timer, "Per iteration");
-    finish!(timer, "Total Loop");
+    finish!(timer, "Total Loop ", somevar);
 }

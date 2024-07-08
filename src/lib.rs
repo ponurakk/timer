@@ -5,8 +5,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+pub use concat_string::concat_string;
 pub use timer_macro::{fn_timer, timer};
-
 pub mod macros;
 
 #[derive(Default)]

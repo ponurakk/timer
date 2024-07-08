@@ -77,6 +77,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "concat-string"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7439becb5fafc780b6f4de382b1a7a3e70234afe783854a4702ee8adbb838609"
+
+[[package]]
 name = "darling"
 version = "0.20.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -242,9 +248,10 @@ dependencies = [
 
 [[package]]
 name = "timer"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "colored",
+ "concat-string",
  "env_logger",
  "log",
  "timer_macro",
