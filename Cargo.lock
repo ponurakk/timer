@@ -259,7 +259,7 @@ dependencies = [
 
 [[package]]
 name = "timer_macro"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "darling",
  "proc-macro2",

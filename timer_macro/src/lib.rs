@@ -51,14 +51,15 @@ pub fn timer(attr: TokenStream, item: TokenStream) -> TokenStream {
         stmts: new_stmts,
     };
 
-    let fn_name = &input.sig.ident;
-    let fn_vis = &input.vis;
-    let fn_args = &input.sig.inputs;
-    let fn_out = &input.sig.output;
-    let fn_where = &input.sig.generics.where_clause;
+    let vis = &input.vis;
+    let sig = &input.sig;
+    let attrs = &input.attrs;
 
     let expanded = quote! {
-        #fn_vis fn #fn_name(#fn_args) #fn_out #fn_where #new_block
+        #(#attrs)*
+        #vis #sig {
+            #new_block
+        }
     };
 
     TokenStream::from(expanded)
@@ -135,13 +136,15 @@ pub fn fn_timer(attr: TokenStream, item: TokenStream) -> TokenStream {
         stmts: new_stmts,
     };
 
-    let fn_name = &input.sig.ident;
-    let fn_args = &input.sig.inputs;
-    let fn_vis = &input.vis;
-    let fn_where = &input.sig.generics.where_clause;
+    let vis = &input.vis;
+    let sig = &input.sig;
+    let attrs = &input.attrs;
 
     let expanded = quote! {
-        #fn_vis fn #fn_name(#fn_args) #fn_out #fn_where #new_block
+        #(#attrs)*
+        #vis #sig {
+            #new_block
+        }
     };
 
     TokenStream::from(expanded)
