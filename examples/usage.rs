@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 #[macro_use]
 extern crate timer;
 
@@ -14,6 +16,8 @@ fn main() {
     // You can time total execution time for loop
     start!(timer, "Total Loop ", somevar);
     let mut _iters = 0;
+
+    #[allow(clippy::explicit_counter_loop)]
     for i in 0..u16::MAX {
         // Or average per iteration
         start_avg!(timer, "Per iteration");

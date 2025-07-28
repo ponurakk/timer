@@ -1,3 +1,6 @@
+//! Macros for the timer crate
+
+/// Start a timer
 #[macro_export]
 macro_rules! start {
     ($timer:expr, $name:expr) => {
@@ -9,6 +12,7 @@ macro_rules! start {
     };
 }
 
+/// Finish a timer
 #[macro_export]
 macro_rules! finish {
     ($timer:expr, $name:expr) => {
@@ -20,6 +24,7 @@ macro_rules! finish {
     };
 }
 
+/// Start a timer for loop averaging
 #[macro_export]
 macro_rules! start_avg {
     ($timer:expr, $name:expr) => {
@@ -27,6 +32,7 @@ macro_rules! start_avg {
     };
 }
 
+/// Tick a timer for loop averaging
 #[macro_export]
 macro_rules! tick_avg {
     ($timer:expr, $name:expr) => {
@@ -34,6 +40,7 @@ macro_rules! tick_avg {
     };
 }
 
+/// Finish a timer for loop averaging
 #[macro_export]
 macro_rules! finish_avg {
     ($timer:expr, $name:expr) => {

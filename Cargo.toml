@@ -12,7 +12,7 @@ repository = "https://github.com/ponurakk/timer"
 colored = "2.1.0"
 concat-string = "1.0.1"
 log = "0.4.22"
-timer_macro = { path = "./timer_macro" }
+timer_macro = { version = "1.0.3", registry = "ycrates", path = "./timer_macro" }
 
 [dev-dependencies]
 env_logger = "0.11.3"
