@@ -1,6 +1,6 @@
 [package]
 name = "timer"
-version = "1.0.3"
+version = "1.0.4"
 edition = "2021"
 authors = ["ponurakk <p0unrakg@int.pl>"]
 description = "Simple timing utility with minimal overhead"
@@ -12,7 +12,7 @@ repository = "https://github.com/ponurakk/timer"
 colored = "2.1.0"
 concat-string = "1.0.1"
 log = "0.4.22"
-timer_macro = { version = "1.0.3", registry = "ycrates", path = "./timer_macro" }
+timer_macro = { version = "1.0.4", registry = "ycrates", path = "./timer_macro" }
 
 [dev-dependencies]
 env_logger = "0.11.3"

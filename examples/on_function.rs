@@ -25,7 +25,7 @@ fn iter_fn() {
 }
 
 fn main() {
-    Builder::from_env(Env::default().default_filter_or("info")).init();
+    Builder::from_env(Env::default().default_filter_or("debug")).init();
 
     let text = my_fn("Hello World".to_string());
     println!("{text}");

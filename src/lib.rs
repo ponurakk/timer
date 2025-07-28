@@ -22,7 +22,7 @@ pub struct Timer<'a> {
 }
 
 fn log(text: &str) {
-    if log_enabled!(log::Level::Info) {
+    if log_enabled!(log::Level::Debug) {
         eprintln!("{text}");
     }
 }

@@ -8,7 +8,7 @@ use env_logger::{Builder, Env};
 // Limit your time wanted to execute in ms
 #[timer(bottleneck = 1)]
 fn main() {
-    Builder::from_env(Env::default().default_filter_or("info")).init();
+    Builder::from_env(Env::default().default_filter_or("debug")).init();
 
     start!(timer, "Total Loop");
     for _ in 0..10_000_000 {}

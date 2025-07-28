@@ -8,7 +8,7 @@ use std::collections::HashMap;
 
 #[timer]
 fn main() {
-    Builder::from_env(Env::default().default_filter_or("info")).init();
+    Builder::from_env(Env::default().default_filter_or("debug")).init();
 
     let mut hashmap: HashMap<u16, String> = HashMap::new();
     let somevar: String = String::from("1");
